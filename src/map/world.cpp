@@ -1,6 +1,4 @@
 #include "world.h"
-#include <iostream>
-using namespace std;
 
 World::World(): numTileSets(0), tileSets(NULL) {}
 
@@ -13,10 +11,8 @@ Map &World::getMap(size_t index)
 {
     if(index < maps.size())
         return maps[index];
-    else {
-        cout << endl << "Invalid index: " << index << ", size: " << maps.size() << endl;
+    else
         throw WE_INVALID_INDEX;
-    }
 }
 
 StartInfo World::getStartInfo() const
@@ -38,25 +34,20 @@ void World::Load(const QString &fileName)
     QDomElement child = root.firstChildElement("start");
     if(child.isNull())
         throw WE_INVALID_FILE;
-    cout << "Found " << child.childNodes().count() << " start nodes." << endl;
     getStartInfo(child);
     child = root.firstChildElement("tilesets");
     if(!child.isNull()) {
         numTileSets = child.childNodes().count();
         tileSets = new std::vector<TileInfo>[numTileSets];
-        cout << "Found " << numTileSets << " tilesets." << endl;
         for(QDomElement subChild = child.firstChildElement(); !subChild.isNull(); subChild = subChild.nextSiblingElement())
             loadTileSet(subChild);
     }
-    cout << "Check for maps: ";
     child = root.firstChildElement("maps");
     if(child.isNull())
         throw WE_INVALID_FILE;
     maps.resize(child.childNodes().count());
-    cout << "Found " << maps.size() << " maps, load: " << endl;
     for(QDomElement subChild = child.firstChildElement(); !subChild.isNull(); subChild = subChild.nextSiblingElement())
         loadMap(subChild);
-    system("pause");
 }
 
 void World::getStartInfo(const QDomElement &startElement)
@@ -90,7 +81,6 @@ void World::loadTile(const QDomElement &startElement, int tileSet)
         if(!tile.firstChildElement("South").isNull())
             tileSets[tileSet][curTile].Collision |= TileInfo::COLLIDE_SOUTH;
     }
-    cout << "Loaded tile: " << curTile << ", Draw: " << tileSets[tileSet][curTile].Draw << ", Collision: " << int(tileSets[tileSet][curTile].Collision) << endl;
 }
 
 void World::loadMap(const QDomElement &startElement)
@@ -106,20 +96,16 @@ void World::loadRoom(const QDomElement &startElement, int map)
 {
     size_t curRoom = startElement.attribute("id").toUInt();
     size_t tileSet = startElement.attribute("tileSet").toUInt();
-    cout << "\tLoading room: " << curRoom << endl;
     int height,width, index=0;
     QDomElement child, location;
-    cout << "\tLoad height: ";
     child = startElement.firstChildElement("height");
     if(child.isNull())
         throw WE_INVALID_FILE;
     height = child.text().toUInt();
-    cout << height << endl << "\tLoad Width: ";
     child = startElement.firstChildElement("width");
     if(child.isNull())
         throw WE_INVALID_FILE;
     width = child.text().toUInt();
-    cout << width <<endl;
     Room room(height,width);
     room.Name = startElement.attribute("name").toStdString();
     if(tileSet >= numTileSets)
@@ -138,12 +124,10 @@ void World::loadRoom(const QDomElement &startElement, int map)
 
 void World::loadLocation(const QDomElement &startElement,Map& map, Room &room, size_t roomIndex, size_t tileIndex)
 {
-    cout << "\t\tLoading tile " << tileIndex;
     TileInfo curTile = (*room.TileSet).at(startElement.attribute("type").toUInt());
     room.getTile(tileIndex).Data = startElement.attribute("data").toInt();
     size_t row, col;
     room.Coordinates(tileIndex,row,col);
-    cout << " (" << row << ", " << col << ")" << endl;
     if(curTile.Collision & TileInfo::COLLIDE_EAST)
         if(col < room.Cols()-1 )
             room.Connected(room.ItemIndex(row,col+1), tileIndex) = Tile::CONNECTION_NONE;
