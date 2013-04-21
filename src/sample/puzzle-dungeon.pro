@@ -1,11 +1,14 @@
 TEMPLATE = app
 CONFIG += console
-CONFIG -= qt
+CONFIG += qt
+QT += xml
 
 SOURCES += main.cpp \
-    ../map/room.cpp \
+    ../map/link.cpp \
     ../map/map.cpp \
-    ../map/link.cpp
+    ../map/room.cpp \
+    ../map/tileinfo.cpp \
+    ../map/world.cpp \
 
 INCLUDEPATH += ../../include
 
@@ -15,5 +18,7 @@ HEADERS += \
     room.h \
     map.h \
     link.h \
-    tile.h
+    tile.h \
+    tileinfo.h \
+    world.h \
 

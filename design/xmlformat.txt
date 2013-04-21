@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<world version="">
+	<start>
+		<map></map>
+		<room></room>
+		<row></row>
+		<col></col>
+	</start>
+	<tilesets>
+		<tileset id="">
+			<image></image>
+			<tile id="" = draw="">
+				<Collisions>
+					<North/>
+					<South/>
+					<East/>
+					<West/>
+				</Collisions>
+			</tile>
+		</tileset>
+	</tilesets>
+	<maps>
+		<map id="" name="">
+			<room id="" name="" tileSet="">
+				<height></height>
+				<width></width>
+				<locations>
+					<location type="" data="">
+						<link id="" row="" col=""/>
+					</location>
+				</locations>
+				<link id="" row="" col=""/>
+			</room>
+			<room></room>
+		</map>
+		<map id=""></map>
+	</maps>
+</world>

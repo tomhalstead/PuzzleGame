@@ -1,5 +1,5 @@
 #include <iostream>
-#include "map.h"
+#include "world.h"
 #include <ctime>
 #include <cstdlib>
 #include <iomanip>
@@ -17,7 +17,25 @@ int main()
 {
     srand(time(NULL));
     size_t size = 4;
-    Map m = generate();
+    World w;
+    try {
+        w.Load("default.map");
+    }
+    catch(WORLD_ERRORS e) {
+        switch(e) {
+        case WE_IO_ERROR:
+            cout << "IO ERROR" << endl;
+            break;
+        case WE_INVALID_FILE:
+            cout << "INVALID FILE" << endl;
+            break;
+        case WE_INVALID_INDEX:
+            cout << "INVALID MAP INDEX" << endl;
+            break;
+        }
+        exit(1);
+    }
+    Map m = w.getMap(0);
     Room* room;
     try {
         for(int i = 0; i < 4; i++) {

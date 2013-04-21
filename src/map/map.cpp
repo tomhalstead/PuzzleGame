@@ -21,3 +21,8 @@ Link &Map::getLink(size_t from, size_t to)
 {
     return this->Edge(from,to);
 }
+
+void Map::setTileSet(std::vector<TileInfo> *TileSet)
+{
+    tileSet = TileSet;
+}

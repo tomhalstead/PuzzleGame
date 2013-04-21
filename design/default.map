@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<world version="0.0">
+	<start>
+		<map>0</map>
+		<room>0</room>
+		<row>1</row>
+		<col>1</col>
+	</start>
+	<tilesets>
+		<tileset id="0">
+			<tile id="0" draw="0"/>
+			<tile id="2" draw="2"/>
+			<tile id="3" draw="3"/>
+			<tile id="1" draw="1">
+				<Collisions>
+					<North/>
+					<South/>
+					<East/>
+					<West/>
+				</Collisions>
+			</tile>
+		</tileset>
+	</tilesets>
+	<maps>
+		<map id="0">
+			<room id="0" tileSet="0">
+				<height>4</height>
+				<width>4</width>
+				<locations>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="0"/>
+					<location type="0"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="0"/>
+					<location type="0"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="3" data="-2">
+						<link id="1" row="1" col="2"/>
+					</location>
+					<location type="1"/>
+				</locations>
+			</room>
+			<room id="1" tileSet="0">
+				<height>4</height>
+				<width>4</width>
+				<locations>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="3" data="-2">
+						<link id="0" row="2" col="2"/>
+					</location>
+					<location type="1"/>
+
+					<location type="1"/>
+					<location type="0"/>
+					<location type="0"/>
+					<location type="1"/>
+					
+					<location type="3" data="-2">
+						<link id="2" row="2" col="2"/>
+					</location>
+					<location type="0"/>
+					<location type="0"/>
+					<location type="3" data="-2">
+						<link id="3" row="2" col="1"/>
+					</location>
+					
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+				</locations>
+			</room>
+			<room id="2" tileSet="0">
+				<height>4</height>
+				<width>4</width>
+				<locations>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					
+					<location type="1"/>
+					<location type="2" data="-3"/>
+					<location type="0"/>
+					<location type="1"/>
+					
+					<location type="1"/>
+					<location type="0"/>
+					<location type="0"/>
+					<location type="3" data="-2">
+						<link id="1" row="2" col="1"/>
+					</location>
+					
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+				</locations>
+			</room>
+			<room id="3" tileSet="0">
+				<height>4</height>
+				<width>4</width>
+				<locations>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+
+					<location type="1"/>
+					<location type="0"/>
+					<location type="0"/>
+					<location type="1"/>
+
+					<location type="3" data="-2">
+						<link id="1" row="2" col="2"/>
+					</location>
+					<location type="0"/>
+					<location type="0"/>
+					<location type="1"/>
+
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+					<location type="1"/>
+				</locations>
+			</room>
+		</map>
+	</maps>
+</world>

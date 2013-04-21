@@ -133,6 +133,7 @@ Desktop.ini
 # Qt user settings
 *.pro.user*
 *test*
+*build*
 
 #############
 ## Python
