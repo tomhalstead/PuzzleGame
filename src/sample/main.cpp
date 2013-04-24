@@ -6,22 +6,17 @@
 
 using namespace std;
 
-void draw(Room& room, size_t* player, size_t size);
+void draw(Room& room, size_t* player);
 void draw(Room& room, size_t* player, size_t row, size_t col);
-Map  generate();
-Room* generate(int index);
-void setTile(Room &room, size_t row, size_t col, int type);
-unsigned int randType();
 
 int main()
 {
     srand(time(NULL));
-    size_t size = 4;
     World w;
     try {
         w.Load("default.map");
     }
-    catch(WORLD_ERRORS e) {
+    catch(WORLD_ERROR e) {
         switch(e) {
         case WE_IO_ERROR:
             cout << "IO ERROR" << endl;
@@ -35,79 +30,100 @@ int main()
         }
         exit(1);
     }
-    Map m = w.getMap(0);
-    Room* room;
-    try {
-        for(int i = 0; i < 4; i++) {
-            m.getRoom(i) = generate(i);
-        }
+    catch(PUZZLE_ERROR e) {
+        cout << "PUZZLE ERROR" << endl;
     }
-
     catch(MATRIX_ERROR e) {
-        switch(e) {
-        case INDEX_OOB:
-            cout << "Index OOB" << endl;
-            break;
-        default:
-            cout << "Other Matrix Error" << endl;
-        }
-        exit(1);
+        cout << "MATRIX ERROR" << endl;
     }
     catch(...) {
-        cout << "Unspecified error" << endl;
+        cout << "OTHER ERROR" << endl;
+        exit(1);
     }
-    size_t index = 0;
-    size_t player[2] = {1,1};
+    StartInfo si = w.getStartInfo();
+    size_t index = si.RoomIndex;
+    Room* room = &w.getRoom(index);
+    size_t player[2];
+    player[0] = si.Row;
+    player[1] = si.Col;
     char ans;
+    int move[2];
+    int connection, check, curPlayer;
     do {
         system("cls");
-        cout << "Find the 2, use WASD to move." << endl;
-        room = m.getRoom(index);
-        draw(*room,player,size);
+        move[0] = 0;
+        move[1] = 0;
+        cout << "Find the V, use WASD to move." << endl;
+        room = &w.getRoom(index);
+        draw(*room,player);
         cout << "? ";
         cin >> ans;
+        curPlayer = room->ItemIndex(player[0],player[1]);
         switch(toupper(ans)) {
         case 'W':
-            if(player[0])
-                if(room->Connected(room->ItemIndex(player[0],player[1]),room->ItemIndex(player[0]-1,player[1])) == Tile::CONNECTION_NORMAL)
-                    player[0]--;
+            if(player[0]) {
+                check = room->ItemIndex(player[0]-1,player[1]);
+                connection = room->Connection(curPlayer,check);
+                if(connection) {
+                    move[0] = -1;
+                    if((connection & Tile::CONNECTION_PUZZLE) && !room->Puzzles.at(room->getTile(check).RoomLink.Puzzle)->Solved() )
+                        move[0] = 0;
+                }
+            }
             break;
         case 'A':
-            if(player[1])
-                if(room->Connected(room->ItemIndex(player[0],player[1]),room->ItemIndex(player[0],player[1]-1)) == Tile::CONNECTION_NORMAL)
-                    player[1]--;
+            if(player[1]) {
+                check = room->ItemIndex(player[0],player[1]-1);
+                connection = room->Connection(curPlayer,check);
+                if(connection) {
+                    move[1] = -1;
+                    if((connection & Tile::CONNECTION_PUZZLE)) {
+                        if(!room->Puzzles.at(room->getTile(check).RoomLink.Puzzle)->Solved() )
+                            move[1] = 0;
+                    }
+                }
+            }
             break;
         case 'S':
-            if(player[0]<size-1)
-                if(room->Connected(room->ItemIndex(player[0],player[1]),room->ItemIndex(player[0]+1,player[1])) == Tile::CONNECTION_NORMAL)
-                    player[0]++;
+            if(player[0]<room->Rows()-1) {
+                check = room->ItemIndex(player[0]+1,player[1]);
+                connection = room->Connection(curPlayer,check);
+                if(connection) {
+                    move[0] = 1;
+                    if((connection & Tile::CONNECTION_PUZZLE) && !room->Puzzles.at(room->getTile(check).RoomLink.Puzzle)->Solved() )
+                        move[0] = 0;
+                }
+            }
             break;
         case 'D':
-            if(player[1]<size-1)
-                if(room->Connected(room->ItemIndex(player[0],player[1]),room->ItemIndex(player[0],player[1]+1)) == Tile::CONNECTION_NORMAL)
-                    player[1]++;
-            break;
+            if(player[1]<room->Cols()-1) {
+                check = room->ItemIndex(player[0],player[1]+1);
+                connection = room->Connection(curPlayer,check);
+                if(connection) {
+                    move[1] = 1;
+                    if((connection & Tile::CONNECTION_PUZZLE) && !room->Puzzles.at(room->getTile(check).RoomLink.Puzzle)->Solved() )
+                        move[1] = 0;
+                }
+            }
             break;
         case '0':
             break;
         default:
             cout << "Invalid option." << endl;
         }
+        player[0] += move[0];
+        player[1] += move[1];
         Tile check = room->getTile(player[0],player[1]);
         Link link;
+        for(unsigned int i = 0; i < room->Puzzles.size(); i++)
+            room->Puzzles.at(i)->Activate(player[0],player[1]);
         switch(check.Data) {
         case Tile::DATA_ROOMEDGE:
-            link = m.getLink(index,check.Index);
-            index = check.Index;
-            if(link.Linked) {
-                player[0] = link.Row;
-                player[1] = link.Col;
-                room = m.getRoom(index);
-            }
-            else {
-                cout << "INVALID ROOM LINK DETECTED" << endl;
-                ans = '0';
-            }
+            link = check.RoomLink;
+            index = link.Room;
+            player[0] = link.Row;
+            player[1] = link.Col;
+            room = &w.getRoom(index);
             break;
         case Tile::DATA_VICTORY:
             cout << "VICTORY!" << endl;
@@ -122,9 +138,9 @@ int main()
 
 
 
-void draw(Room& room, size_t* player, size_t size) {
-    for(size_t i = 0; i < size; i++) {
-        for(size_t j = 0; j < size; j++)
+void draw(Room& room, size_t* player) {
+    for(size_t i = 0; i < room.Rows(); i++) {
+        for(size_t j = 0; j < room.Cols(); j++)
             draw(room,player,i,j);
         cout << endl;
     }
@@ -133,92 +149,17 @@ void draw(Room& room, size_t* player, size_t size) {
 void draw(Room &room, size_t* player, size_t row, size_t col) {
     if(player[0] == row && player[1] == col)
         cout << setw(4) << "P";
-    else
-        cout << setw(4) << room.getTile(row,col).Type;
-}
-
-unsigned int randType() {
-    unsigned int value = rand() % 100;
-    if(value > 19)
-        return 0;
-    else if(value > 9)
-        return 1; // Wall
-    else
-        return 2; // Other
-}
-
-void setTile(Room &room, size_t row, size_t col, int type) {
-    room.getTile(row,col).Type = type;
-    size_t index = room.ItemIndex(row,col);
-    switch(type) {
-    case 1:
-        if(row > 0)
-            room.Connected(room.ItemIndex(row-1,col),index) = Tile::CONNECTION_NONE;
-        if(row < room.Rows()-1)
-            room.Connected(room.ItemIndex(row+1,col),index) = Tile::CONNECTION_NONE;
-        if(col > 0)
-            room.Connected(room.ItemIndex(row,col-1),index) = Tile::CONNECTION_NONE;
-        if(col < room.Cols()-1)
-            room.Connected(room.ItemIndex(row,col+1),index) = Tile::CONNECTION_NONE;
-        break;
-    default:
-        break;
+    else {
+        char out;
+        std::vector<TileInfo>* info;
+        PuzzleItem* p;
+        out = char(room.getTile(row,col).Draw);
+        for(unsigned int i = 0; i < room.Puzzles.size(); i++) {
+            p = room.Puzzles.at(i)->getItem(row,col);
+            info = room.Puzzles.at(i)->TileSet;
+            if(p)
+                out = (p->Status()) ? char(info->at(p->SetTile).Draw) : char(info->at(p->ClearTile).Draw);
+        }
+        cout << setw(4) << out;
     }
-}
-
-Room* generate(int index) {
-    Room* result = new Room(4,4);
-    for(size_t i = 0; i < 4; i++)
-        for(size_t j = 0; j < 4; j++)
-            setTile(*result,i,j,(!i || !j || i==3 || j==3 ));
-    switch(index) {
-    case 0:
-        result->getTile(3,2).Type = 3;
-        result->getTile(3,2).Data = Tile::DATA_ROOMEDGE;
-        result->Connected(result->ItemIndex(2,2),result->ItemIndex(3,2)) = Tile::CONNECTION_NORMAL;
-        result->getTile(3,2).Index = 1;
-        break;
-    case 1:
-        result->getTile(0,2).Type = 3;
-        result->getTile(0,2).Data = Tile::DATA_ROOMEDGE;
-        result->Connected(result->ItemIndex(1,2),result->ItemIndex(0,2)) = Tile::CONNECTION_NORMAL;
-        result->getTile(0,2).Index = 0;
-        result->getTile(2,0).Type = 3;
-        result->getTile(2,0).Data = Tile::DATA_ROOMEDGE;
-        result->Connected(result->ItemIndex(2,1),result->ItemIndex(2,0)) = Tile::CONNECTION_NORMAL;
-        result->getTile(2,0).Index = 2;
-        result->Connected(result->ItemIndex(2,2),result->ItemIndex(2,3)) = Tile::CONNECTION_NORMAL;
-        result->getTile(2,3).Type = 3;
-        result->getTile(2,3).Data = Tile::DATA_ROOMEDGE;
-        result->getTile(2,3).Index = 3;
-        break;
-    case 2:
-        result->getTile(1,1).Type = 2;
-        result->getTile(1,1).Data = Tile::DATA_VICTORY;
-        result->Connected(result->ItemIndex(2,2),result->ItemIndex(2,3)) = Tile::CONNECTION_NORMAL;
-        result->getTile(2,3).Type = 3;
-        result->getTile(2,3).Data = Tile::DATA_ROOMEDGE;
-        result->getTile(2,3).Index = 1;
-        break;
-    case 3:
-        result->Connected(result->ItemIndex(2,1),result->ItemIndex(2,0)) = Tile::CONNECTION_NORMAL;
-        result->getTile(2,0).Type = 3;
-        result->getTile(2,0).Data = Tile::DATA_ROOMEDGE;
-        result->getTile(2,0).Index = 1;
-        break;
-    default:
-        break;
-    }
-    return result;
-}
-
-Map  generate() {
-    Map result(4);
-    result.getLink(0,1).SetLink(1,2);
-    result.getLink(1,0).SetLink(2,2);
-    result.getLink(1,2).SetLink(2,2);
-    result.getLink(2,1).SetLink(2,1);
-    result.getLink(1,3).SetLink(2,1);
-    result.getLink(3,1).SetLink(2,2);
-    return result;
 }

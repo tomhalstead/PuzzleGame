@@ -8,106 +8,75 @@
 	</start>
 	<tilesets>
 		<tileset id="0">
-			<tile id="0" draw="0"/>
-			<tile id="2" draw="2"/>
-			<tile id="3" draw="3"/>
-			<tile id="1" draw="1">
-				<Collisions>
-					<North/>
-					<South/>
-					<East/>
-					<West/>
-				</Collisions>
+			<tile id="0" draw="32"/>
+			<tile id="2" draw="86"/>
+			<tile id="3" draw="222"/>
+			<tile id="1" draw="42">
+				<All/>
 			</tile>
+			<tile id="4" draw="164"/>
+			<tile id="5" draw="191">
+				<Puzzle id="0"/>
+			</tile>
+			<tile id="6" draw="33"/>
+			<tile id="7" draw="215"/>
+			<tile id="8" draw="8"/>
+			<tile id="9" draw="65"/>
 		</tileset>
 	</tilesets>
-	<maps>
-		<map id="0">
-			<room id="0" tileSet="0">
-				<height>4</height>
-				<width>4</width>
-				<locations>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="0"/>
-					<location type="0"/>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="0"/>
-					<location type="0"/>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="3" data="-2">
-						<link id="1" row="1" col="2"/>
-					</location>
-					<location type="1"/>
-				</locations>
-			</room>
-			<room id="1" tileSet="0">
-				<height>4</height>
-				<width>4</width>
-				<locations>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="3" data="-2">
-						<link id="0" row="2" col="2"/>
-					</location>
-					<location type="1"/>
+	<map>
+		<room id="0" tileSet="0" rows="4" cols="4">
+			<locations>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="3" data="-1">
+					<link room="1" row="1" col="2"/>
+				</location>
+				<location type="1"/>
+			</locations>
+		</room>
+		<room id="1" tileSet="0" rows="4" cols="4">
+			<locations>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="3" data="-1">
+					<link room="0" row="2" col="2"/>
+				</location>
+				<location type="1"/>
 
-					<location type="1"/>
-					<location type="0"/>
-					<location type="0"/>
-					<location type="1"/>
-					
-					<location type="3" data="-2">
-						<link id="2" row="2" col="2"/>
-					</location>
-					<location type="0"/>
-					<location type="0"/>
-					<location type="3" data="-2">
-						<link id="3" row="2" col="1"/>
-					</location>
-					
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-				</locations>
-			</room>
-			<room id="2" tileSet="0">
-				<height>4</height>
-				<width>4</width>
-				<locations>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-					
-					<location type="1"/>
-					<location type="2" data="-3"/>
-					<location type="0"/>
-					<location type="1"/>
-					
-					<location type="1"/>
-					<location type="0"/>
-					<location type="0"/>
-					<location type="3" data="-2">
-						<link id="1" row="2" col="1"/>
-					</location>
-					
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-					<location type="1"/>
-				</locations>
-			</room>
-			<room id="3" tileSet="0">
-				<height>4</height>
-				<width>4</width>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="1"/>
+				
+				<location type="3" data="-1">
+					<link room="2" row="1" col="6"/>
+				</location>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="3" data="-1">
+					<link room="3" row="2" col="1"/>
+				</location>
+				
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+			</locations>
+		</room>
+		<room id="3" tileSet="0" rows="4" cols="4">
 				<locations>
 					<location type="1"/>
 					<location type="1"/>
@@ -119,8 +88,8 @@
 					<location type="0"/>
 					<location type="1"/>
 
-					<location type="3" data="-2">
-						<link id="1" row="2" col="2"/>
+					<location type="3" data="-1">
+						<link room="1" row="2" col="2"/>
 					</location>
 					<location type="0"/>
 					<location type="0"/>
@@ -132,6 +101,142 @@
 					<location type="1"/>
 				</locations>
 			</room>
-		</map>
-	</maps>
+		<room id="2" tileSet="0" rows="12" cols="8">
+			<locations>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+
+				<location type="1"/>
+				<location type="2" data="-2"/>
+				<location type="5"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="3" data="-1">
+					<link room="1" row="2" col="2"/>
+				</location>
+
+				<location type="1"/>
+				<location type="0"/>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="4"/>
+				<location type="0"/>
+				<location type="4"/>
+				<location type="1"/>
+				
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="1"/>
+				
+				<location type="1"/>
+				<location type="0"/>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="4"/>
+				<location type="0"/>
+				<location type="4"/>
+				<location type="1"/>
+				
+				<location type="1"/>
+				<location type="0"/>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="1"/>
+				
+				<location type="1"/>
+				<location type="0"/>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="1"/>
+				
+				<location type="1"/>
+				<location type="0"/>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="1"/>
+				
+				<location type="1"/>
+				<location type="0"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="0"/>
+				<location type="1"/>
+				
+				<location type="1"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="7"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="1"/>
+				
+				<location type="1"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="0"/>
+				<location type="1"/>
+				
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+				<location type="1"/>
+			</locations>
+			<puzzles>
+				<puzzle id="0" tileSet="0">
+					<pieces>
+						<piece type="4" setType="9" row="2" col="4" required="1">
+							<set/>
+						</piece>
+						<piece type="4" setType="9" row="2" col="6" required="1">
+							<set/>
+						</piece>
+						<piece type="4" setType="9" row="4" col="4" required="1">
+							<set/>
+						</piece>
+						<piece type="4" setType="9" row="4" col="6" required="1">
+							<set/>
+						</piece>
+						<piece type="7" setType="8" row="9" col="4">
+							<tile row="3" col="1" type="0"/>
+						</piece>
+					</pieces>
+					<actions>
+						<tile row="1" col="2" type="6"/>
+					</actions>
+				</puzzle>
+			</puzzles>
+		</room>
+	</map>
 </world>

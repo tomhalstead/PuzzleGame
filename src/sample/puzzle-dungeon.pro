@@ -5,10 +5,10 @@ QT += xml
 
 SOURCES += main.cpp \
     ../map/link.cpp \
-    ../map/map.cpp \
     ../map/room.cpp \
-    ../map/tileinfo.cpp \
     ../map/world.cpp \
+    ../map/puzzle.cpp \
+    ../map/puzzleitem.cpp \
 
 INCLUDEPATH += ../../include
 
@@ -16,9 +16,10 @@ HEADERS += \
     matrix.h \
     graph.h \
     room.h \
-    map.h \
     link.h \
     tile.h \
     tileinfo.h \
     world.h \
+    puzzle.h \
+    puzzleitem.h \
 

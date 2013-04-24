@@ -7,17 +7,22 @@ World::World(const QString &fileName): numTileSets(0), tileSets(NULL)
     Load(fileName);
 }
 
-Map &World::getMap(size_t index)
+StartInfo World::getStartInfo() const
 {
-    if(index < maps.size())
-        return maps[index];
+    return si;
+}
+
+Room &World::getRoom(size_t index)
+{
+    if(index < rooms.size())
+        return *rooms[index];
     else
         throw WE_INVALID_INDEX;
 }
 
-StartInfo World::getStartInfo() const
+size_t World::Size() const
 {
-    return si;
+    return rooms.size();
 }
 
 void World::Load(const QString &fileName)
@@ -42,17 +47,16 @@ void World::Load(const QString &fileName)
         for(QDomElement subChild = child.firstChildElement(); !subChild.isNull(); subChild = subChild.nextSiblingElement())
             loadTileSet(subChild);
     }
-    child = root.firstChildElement("maps");
+    child = root.firstChildElement("map");
     if(child.isNull())
         throw WE_INVALID_FILE;
-    maps.resize(child.childNodes().count());
+    rooms.resize(child.childNodes().count(),NULL);
     for(QDomElement subChild = child.firstChildElement(); !subChild.isNull(); subChild = subChild.nextSiblingElement())
-        loadMap(subChild);
+        loadRoom(subChild);
 }
 
 void World::getStartInfo(const QDomElement &startElement)
 {
-    si.MapIndex = startElement.firstChildElement("map").text().toUInt();
     si.RoomIndex = startElement.firstChildElement("room").text().toUInt();
     si.Row = startElement.firstChildElement("row").text().toUInt();
     si.Col = startElement.firstChildElement("col").text().toUInt();
@@ -68,81 +72,148 @@ void World::loadTileSet(const QDomElement &startElement)
 
 void World::loadTile(const QDomElement &startElement, int tileSet)
 {
-    int curTile = startElement.attribute("id").toInt();
-    tileSets[tileSet][curTile].Draw = startElement.attribute("draw").toInt();
-    QDomElement tile = startElement.firstChildElement();
-    if(!tile.isNull()) {
-        if(!tile.firstChildElement("North").isNull())
-            tileSets[tileSet][curTile].Collision |= TileInfo::COLLIDE_NORTH;
-        if(!tile.firstChildElement("East").isNull())
-            tileSets[tileSet][curTile].Collision |= TileInfo::COLLIDE_EAST;
-        if(!tile.firstChildElement("West").isNull())
-            tileSets[tileSet][curTile].Collision |= TileInfo::COLLIDE_WEST;
-        if(!tile.firstChildElement("South").isNull())
-            tileSets[tileSet][curTile].Collision |= TileInfo::COLLIDE_SOUTH;
+    TileInfo* curTile = &tileSets[tileSet][startElement.attribute("id").toUInt()];
+    curTile->Draw = startElement.attribute("draw").toInt();
+    if(startElement.hasChildNodes()) {
+        QDomElement tile = startElement.firstChildElement("Puzzle");
+        if(!tile.isNull()) {
+            curTile->Collision |= TileInfo::COLLIDE_PUZZLE;
+            curTile->Index = tile.attribute("id").toUInt();
+        }
+        tile = startElement.firstChildElement("Item");
+        if(!tile.isNull()) {
+            curTile->Collision |= TileInfo::COLLIDE_ITEM;
+            curTile->Index = tile.attribute("id").toInt();
+        }
+        if(!startElement.firstChildElement("All").isNull())
+            curTile->Collision |= TileInfo::COLLIDE_ALL;
+        else {
+            if(!startElement.firstChildElement("North").isNull())
+                curTile->Collision |= TileInfo::COLLIDE_NORTH;
+            if(!startElement.firstChildElement("East").isNull())
+                curTile->Collision |= TileInfo::COLLIDE_EAST;
+            if(!startElement.firstChildElement("West").isNull())
+                curTile->Collision |= TileInfo::COLLIDE_WEST;
+            if(!startElement.firstChildElement("South").isNull())
+                curTile->Collision |= TileInfo::COLLIDE_SOUTH;
+        }
     }
 }
 
-void World::loadMap(const QDomElement &startElement)
-{
-    int curMap = startElement.attribute("id").toInt();
-    maps[curMap] = Map(startElement.childNodes().count());
-    maps[curMap].Name = startElement.attribute("name").toStdString();
-    for(QDomElement child = startElement.firstChildElement(); !child.isNull(); child = child.nextSiblingElement())
-        loadRoom(child,curMap);
-}
-
-void World::loadRoom(const QDomElement &startElement, int map)
+void World::loadRoom(const QDomElement &startElement)
 {
     size_t curRoom = startElement.attribute("id").toUInt();
     size_t tileSet = startElement.attribute("tileSet").toUInt();
-    int height,width, index=0;
-    QDomElement child, location;
-    child = startElement.firstChildElement("height");
-    if(child.isNull())
-        throw WE_INVALID_FILE;
-    height = child.text().toUInt();
-    child = startElement.firstChildElement("width");
-    if(child.isNull())
-        throw WE_INVALID_FILE;
-    width = child.text().toUInt();
-    Room room(height,width);
-    room.Name = startElement.attribute("name").toStdString();
+    size_t rows = startElement.attribute("rows").toUInt();
+    size_t cols = startElement.attribute("cols").toUInt();
+    QDomElement child;
+    size_t index=0;
+    Room* room = new Room(rows,cols);
+    rooms[curRoom] = room;
+    room->Name = startElement.attribute("name").toStdString();
     if(tileSet >= numTileSets)
         throw WE_INVALID_FILE;
-    room.TileSet = tileSets + tileSet;
-    child = child.nextSiblingElement("locations");
-    if(child.isNull() || child.childNodes().count() != height * width)
+    room->TileSet = tileSets + tileSet;
+    child = startElement.firstChildElement("locations");
+    if(child.isNull() || (size_t)child.childNodes().count() != rows * cols)
         throw WE_INVALID_FILE;
-    location = child.firstChildElement();
-    while(!location.isNull())  {
-        loadLocation(location,maps[map],room,curRoom,index);
-        location = location.nextSiblingElement();
-        index++;
+    for(child = child.firstChildElement(); !child.isNull(); child = child.nextSiblingElement())
+        loadLocation(child,curRoom,index++);
+    child = startElement.firstChildElement("puzzles");
+    room->Puzzles.resize(child.childNodes().count(),NULL);
+    for(child = child.firstChildElement(); !child.isNull();child = child.nextSiblingElement() )
+        loadPuzzle(child,curRoom);
+}
+
+void World::loadLocation(const QDomElement &startElement,size_t roomIndex, size_t tileIndex)
+{
+    Room* room = rooms[roomIndex];
+    Tile* tile = &room->getTile(tileIndex);
+    size_t row, col;
+    room->Coordinates(tileIndex,row,col);
+    tile->Data = startElement.attribute("data").toInt();
+    room->setTile(tileIndex,startElement.attribute("type").toUInt());
+    QDomElement child = startElement.firstChildElement("link");
+    if(!child.isNull()) {
+        tile->RoomLink.Room = child.attribute("room").toUInt();
+        tile->RoomLink.Row = child.attribute("row").toUInt();
+        tile->RoomLink.Col = child.attribute("col").toUInt();
     }
 }
 
-void World::loadLocation(const QDomElement &startElement,Map& map, Room &room, size_t roomIndex, size_t tileIndex)
+void World::loadPuzzle(const QDomElement &startElement, size_t roomIndex)
 {
-    TileInfo curTile = (*room.TileSet).at(startElement.attribute("type").toUInt());
-    room.getTile(tileIndex).Data = startElement.attribute("data").toInt();
+    Puzzle* p = new Puzzle(&rooms,roomIndex);
+    size_t curPuzzle = startElement.attribute("id").toUInt();
+    size_t row,col;
+    rooms[roomIndex]->Puzzles[curPuzzle] = p;
+    p->TileSet = &tileSets[startElement.attribute("tileSet").toUInt()];
+    for(QDomElement child = startElement.firstChildElement("pieces").firstChildElement();
+        !child.isNull(); child = child.nextSiblingElement())
+    {
+        PuzzleItem* i = new PuzzleItem();
+        i->ClearTile = child.attribute("type").toUInt();
+        if(child.hasAttribute("setType"))
+            i->SetTile = child.attribute("setType").toUInt();
+        if(child.hasAttribute("required")) {
+            if(child.attribute("required").toInt())
+                i->Required = PuzzleItem::REQUIRED_SET;
+            else
+                i->Required = PuzzleItem::REQUIRED_CLEAR;
+        }
+        if(child.attribute("value").toInt())
+            i->Set();
+        else
+            i->Clear();
+        row = child.attribute("row").toUInt();
+        col = child.attribute("col").toUInt();
+        p->getItem(row,col) = i;
+        loadActions(child,roomIndex,curPuzzle,rooms[roomIndex]->ItemIndex(row,col));
+    }
+    p->getItem(p->Size()-1) = new PuzzleItem();
+    loadActions(startElement.firstChildElement("actions"),roomIndex,curPuzzle,rooms[roomIndex]->Size());
+}
+
+void World::loadActions(const QDomElement &startElement, size_t roomIndex, size_t puzzleIndex, size_t tileIndex)
+{
     size_t row, col;
-    room.Coordinates(tileIndex,row,col);
-    if(curTile.Collision & TileInfo::COLLIDE_EAST)
-        if(col < room.Cols()-1 )
-            room.Connected(room.ItemIndex(row,col+1), tileIndex) = Tile::CONNECTION_NONE;
-    if(curTile.Collision & TileInfo::COLLIDE_WEST)
-        if(col)
-            room.Connected(room.ItemIndex(row,col-1), tileIndex) = Tile::CONNECTION_NONE;
-    if(curTile.Collision & TileInfo::COLLIDE_NORTH)
-        if(row)
-            room.Connected(room.ItemIndex(row-1,col), tileIndex) = Tile::CONNECTION_NONE;
-    if(curTile.Collision & TileInfo::COLLIDE_SOUTH)
-        if(row < room.Rows()-1)
-            room.Connected(room.ItemIndex(row+1,col), tileIndex) = Tile::CONNECTION_NONE;
-    for(QDomElement child = startElement.firstChildElement(); !child.isNull(); child = child.nextSiblingElement()) {
-        Link link(true,child.attribute("row").toUInt(),child.attribute("col").toUInt());
-        map.getLink(roomIndex,child.attribute("id").toUInt()) = link;
+    bool isAction;
+    rooms[roomIndex]->Coordinates(tileIndex,row,col);
+    for(QDomElement action = startElement.firstChildElement(); !action.isNull(); action = action.nextSiblingElement()) {
+        isAction = false;
+        Action a;
+        if(action.tagName().toLower()=="set") {
+            a.Type = Action::SET;
+            isAction = true;
+        }
+        else if(action.tagName().toLower()=="clear") {
+            a.Type = Action::CLEAR;
+            isAction = true;
+        }
+        else if(action.tagName().toLower()=="toggle") {
+            a.Type = Action::TOGGLE;
+            isAction = true;
+        }
+        else if(action.tagName().toLower()=="tile") {
+            a.Type = Action::TILE;
+            a.Copy = new Tile();
+            a.Copy->Type = action.attribute("type").toUInt();
+            a.Copy->Data = action.hasAttribute("data") ?  action.attribute("data").toInt() : Tile::DATA_NOCOPY;
+            QDomElement link;
+            if( !( link = action.firstChildElement("link")).isNull() ) {
+                a.Copy->RoomLink.Room = link.attribute("room").toUInt();
+                a.Copy->RoomLink.Row = link.attribute("row").toUInt();
+                a.Copy->RoomLink.Col = link.attribute("col").toUInt();
+            }
+            isAction = true;
+        }
+        if(isAction) {
+            a.Room = action.hasAttribute("room") ? action.attribute("room").toUInt() : roomIndex;
+            a.Index = action.hasAttribute("id") ? action.attribute("id").toUInt(): puzzleIndex;
+            a.Row = action.hasAttribute("row") ? action.attribute("row").toUInt() : row;
+            a.Col = action.hasAttribute("col") ? action.attribute("col").toUInt() : col;
+            rooms[roomIndex]->Puzzles[puzzleIndex]->getItem(tileIndex)->Actions.push_back(a);
+        }
     }
 }
 

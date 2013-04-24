@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 
+class Room;
+
 class Map: private Graph<Room*,Link>
 {
 public:
