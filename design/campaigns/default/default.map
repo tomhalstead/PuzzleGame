@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <world version="0.0">
-	<start>
-		<map>0</map>
-		<room>0</room>
-		<row>1</row>
-		<col>1</col>
-	</start>
+	<info>
+		<intro image="">
+			Our hero sets out on a quest for unimaginable treasure
+		</intro>
+		<victory image="">
+			Our hero found treasure
+		</victory>
+	</info>
+	<start room="0" row="1" col="1"/>
 	<tilesets>
 		<tileset id="0">
-			<tile id="0" draw="32"/>
-			<tile id="2" draw="86"/>
-			<tile id="3" draw="222"/>
-			<tile id="1" draw="42">
+			<tile id="0" draw="0"/>
+			<tile id="2" draw="2"/>
+			<tile id="3" draw="3"/>
+			<tile id="1" draw="1">
 				<All/>
 			</tile>
-			<tile id="4" draw="164"/>
-			<tile id="5" draw="191">
-				<Puzzle id="0"/>
-			</tile>
-			<tile id="6" draw="33"/>
-			<tile id="7" draw="215"/>
+			<tile id="4" draw="4"/>
+			<tile id="5" draw="5" puzzle="0"/>
+			<tile id="6" draw="6"/>
+			<tile id="7" draw="7"/>
 			<tile id="8" draw="8"/>
-			<tile id="9" draw="65"/>
+			<tile id="9" draw="9"/>
 		</tileset>
 	</tilesets>
 	<map>
-		<room id="0" tileSet="0" rows="4" cols="4">
+		<room id="0" tileSet="0" rows="4" cols="4" name="Start">
 			<locations>
 				<location type="1"/>
 				<location type="1"/>
@@ -47,7 +48,7 @@
 				<location type="1"/>
 			</locations>
 		</room>
-		<room id="1" tileSet="0" rows="4" cols="4">
+		<room id="1" tileSet="0" rows="4" cols="4" name="Crossroads">
 			<locations>
 				<location type="1"/>
 				<location type="1"/>
@@ -76,7 +77,7 @@
 				<location type="1"/>
 			</locations>
 		</room>
-		<room id="3" tileSet="0" rows="4" cols="4">
+		<room id="3" tileSet="0" rows="4" cols="4" name="Dead end :(">
 				<locations>
 					<location type="1"/>
 					<location type="1"/>
@@ -101,7 +102,7 @@
 					<location type="1"/>
 				</locations>
 			</room>
-		<room id="2" tileSet="0" rows="12" cols="8">
+		<room id="2" tileSet="0" rows="12" cols="8" name="Puzzles!">
 			<locations>
 				<location type="1"/>
 				<location type="1"/>
@@ -120,7 +121,7 @@
 				<location type="0"/>
 				<location type="0"/>
 				<location type="3" data="-1">
-					<link room="1" row="2" col="2"/>
+					<link room="1" row="2" col="1"/>
 				</location>
 
 				<location type="1"/>
@@ -217,23 +218,24 @@
 				<puzzle id="0" tileSet="0">
 					<pieces>
 						<piece type="4" setType="9" row="2" col="4" required="1">
-							<set/>
+							<toggle/>
 						</piece>
 						<piece type="4" setType="9" row="2" col="6" required="1">
-							<set/>
+							<toggle/>
 						</piece>
 						<piece type="4" setType="9" row="4" col="4" required="1">
-							<set/>
+							<toggle/>
 						</piece>
 						<piece type="4" setType="9" row="4" col="6" required="1">
-							<set/>
+							<toggle/>
 						</piece>
 						<piece type="7" setType="8" row="9" col="4">
+							<set/>
 							<tile row="3" col="1" type="0"/>
 						</piece>
 					</pieces>
 					<actions>
-						<tile row="1" col="2" type="6"/>
+						<tile row="1" col="2" type="2"/>
 					</actions>
 				</puzzle>
 			</puzzles>

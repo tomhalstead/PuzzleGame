@@ -1,7 +1,10 @@
 #include "puzzleitem.h"
+#include <QDebug>
 
 Action::Action(): Type(0),Room(0), Row(0), Col(0){}
-PuzzleItem::PuzzleItem(): Required(REQUIRED_NONE), SetTile(0),ClearTile(0), value(false), solved(true){}
+PuzzleItem::PuzzleItem(int required, bool initial): Required(required), SetTile(0),ClearTile(0), value(initial),init(initial){
+    Reset();
+}
 
 bool PuzzleItem::Set() {
     value = true;
@@ -28,6 +31,14 @@ bool PuzzleItem::Toggle() {
     else
         solved = true;
     return solved;
+}
+
+void PuzzleItem::Reset()
+{
+    if(init)
+        Set();
+    else
+        Clear();
 }
 
 bool PuzzleItem::Solved() const{

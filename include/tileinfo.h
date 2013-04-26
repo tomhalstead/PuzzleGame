@@ -2,8 +2,10 @@
 #define TILEINFO_H
 
 #include "tile.h"
+#include <vector>
+#include <QString>
 
-class TileInfo {
+struct TileInfo {
 public:
     TileInfo(int draw = 0, char collisionFlags = COLLIDE_NONE): Draw(draw),Collision(collisionFlags){}
     int Draw;
@@ -18,6 +20,14 @@ public:
     static const char COLLIDE_ALL    = 15;
     static const char COLLIDE_PUZZLE = 16;
     static const char COLLIDE_ITEM   = 32;
+};
+
+struct TileSet {
+    std::vector<TileInfo> Tiles;
+    size_t TileSize;
+    size_t TilesWide;
+    size_t TilesHigh;
+    QString FileName;
 };
 
 #endif // TILEINFO_H

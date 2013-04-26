@@ -9,7 +9,7 @@ using namespace std;
 void draw(Room& room, size_t* player);
 void draw(Room& room, size_t* player, size_t row, size_t col);
 
-int main()
+int main(int argc, char* argv[])
 {
     srand(time(NULL));
     World w;
@@ -40,7 +40,10 @@ int main()
         cout << "OTHER ERROR" << endl;
         exit(1);
     }
-    StartInfo si = w.getStartInfo();
+    cout << "Start count: " << w.StartCount();
+    StartInfo si = w.Start(0);
+    cout << ", Room: " << si.RoomIndex << ", Row: " << si.Row << ", Col: " << si.Col << endl;
+    system("pause");
     size_t index = si.RoomIndex;
     Room* room = &w.getRoom(index);
     size_t player[2];
@@ -147,10 +150,10 @@ void draw(Room& room, size_t* player) {
 }
 
 void draw(Room &room, size_t* player, size_t row, size_t col) {
+    char out;
     if(player[0] == row && player[1] == col)
-        cout << setw(4) << "P";
+        out = 'P';
     else {
-        char out;
         std::vector<TileInfo>* info;
         PuzzleItem* p;
         out = char(room.getTile(row,col).Draw);
@@ -160,6 +163,6 @@ void draw(Room &room, size_t* player, size_t row, size_t col) {
             if(p)
                 out = (p->Status()) ? char(info->at(p->SetTile).Draw) : char(info->at(p->ClearTile).Draw);
         }
-        cout << setw(4) << out;
     }
+    cout << out;
 }

@@ -1,8 +1,8 @@
 #include "room.h"
 
 Room::Room(size_t rows, size_t cols, int defaultConnection):
-    Graph<Tile,int>(rows*cols,defaultConnection), TileSet(NULL),numRows(rows),
-    numCols(cols){}//, PuzzleLayer(NULL) {}
+    Graph<Tile,int>(rows*cols,defaultConnection),numRows(rows),
+    numCols(cols), tileSet(NULL){}//, PuzzleLayer(NULL) {}
 
 size_t Room::Rows() const {
     return numRows;
@@ -29,7 +29,7 @@ Tile &Room::getTile(size_t index)
 
 void Room::setTile(size_t index, size_t type)
 {
-    TileInfo info = TileSet->at(type);
+    TileInfo info = tileSet->at(type);
     size_t row,col, check;
     int connect = Tile::CONNECTION_NORMAL;
     Coordinates(index,row,col);
@@ -87,4 +87,20 @@ void Room::Coordinates(size_t index, size_t &row, size_t &col)
 int &Room::Connection(size_t from, size_t to)
 {
     return this->Edge(from,to);
+}
+
+void Room::setTileSet(size_t index, std::vector<TileInfo>* ptr)
+{
+    setIndex = index;
+    tileSet = ptr;
+}
+
+size_t Room::SetIndex() const
+{
+    return setIndex;
+}
+
+std::vector<TileInfo>& Room::TileSet()
+{
+    return *tileSet;
 }

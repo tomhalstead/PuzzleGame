@@ -4,7 +4,7 @@
 #include "puzzle.h"
 #include "tileinfo.h"
 #include "graph.h"
-#include <string>
+#include <QString>
 
 class Puzzle;
 
@@ -15,17 +15,20 @@ public:
     size_t Rows() const;
     size_t Cols() const;
     size_t Size() const;
-    std::string Name;
+    QString Name;
     Tile& getTile(size_t row, size_t col);
     Tile& getTile(size_t index);
     void setTile(size_t index, size_t type);
     size_t ItemIndex(size_t row, size_t col);
     void Coordinates(size_t index, size_t& row, size_t &col);
     int& Connection(size_t from, size_t to);
-    std::vector<TileInfo>* TileSet;
+    void setTileSet(size_t index, std::vector<TileInfo>* ptr);
+    size_t SetIndex() const;
+    std::vector<TileInfo>& TileSet();
     std::vector<Puzzle*> Puzzles;
 private:
-    size_t numRows, numCols;
+    size_t numRows, numCols,setIndex;
+    std::vector<TileInfo>* tileSet;
 };
 
 #endif // ROOM_H

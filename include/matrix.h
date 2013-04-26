@@ -70,6 +70,8 @@ Matrix<T>::Matrix(size_t rows, size_t cols, const T& value): numRows(rows), numC
 
 template <typename T>
 T Matrix<T>::Determinant() const {
+    if(numRows != numCols)
+        throw SIZE_MISMATCH;
     T temp;
     return temp;
 }

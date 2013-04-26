@@ -18,6 +18,7 @@ public:
     PuzzleItem* &getItem(size_t index);
     size_t Size() const;
     bool Solved();
+    void Reset();
     std::vector<TileInfo>* TileSet;
 private:
     bool solved;

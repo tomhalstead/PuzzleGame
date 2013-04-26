@@ -1,4 +1,5 @@
 #include "puzzle.h"
+#include <QDebug>
 
 Puzzle::Puzzle(std::vector<Room *> *Rooms, size_t ParentIndex):  solved(false), rooms(Rooms), parentIndex(ParentIndex)
 {
@@ -49,20 +50,31 @@ bool Puzzle::Solved()
     return solved;
 }
 
+void Puzzle::Reset()
+{
+    for(size_t i = 0; i < items.size(); i++)
+        if(items[i])
+            items[i]->Reset();
+}
+
 bool Puzzle::perform(size_t index)
 {
     PuzzleItem* p= items[index];
     size_t destIndex;
+    bool result = true;
     for(unsigned int i = 0; i < p->Actions.size(); i++) {
         Action* a = &p->Actions[i];
         Room* target = (rooms->at(a->Room));
         switch(a->Type) {
         case Action::SET:
-            return target->Puzzles[a->Index]->getItem(a->Row,a->Col)->Set();
+            result &= target->Puzzles[a->Index]->getItem(a->Row,a->Col)->Set();
+            break;
         case Action::CLEAR:
-            return target->Puzzles[a->Index]->getItem(a->Row,a->Col)->Clear();
+            result &= target->Puzzles[a->Index]->getItem(a->Row,a->Col)->Clear();
+            break;
         case Action::TOGGLE:
-            return target->Puzzles[a->Index]->getItem(a->Row,a->Col)->Toggle();
+            result &= target->Puzzles[a->Index]->getItem(a->Row,a->Col)->Toggle();
+            break;
         case Action::TILE:
             destIndex = target->ItemIndex(a->Row,a->Col);
             if(target->getTile(destIndex).Type != a->Copy->Type) {
@@ -71,12 +83,14 @@ bool Puzzle::perform(size_t index)
                     target->getTile(destIndex).Data = a->Copy->Data;
                 target->getTile(destIndex).RoomLink = a->Copy->RoomLink;
             }
-            return true;
+            result = solved;
+            break;
         default:
+            result = solved;
             break;
         }
     }
-    return false;
+    return result;
 }
 
 

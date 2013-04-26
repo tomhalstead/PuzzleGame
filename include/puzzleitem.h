@@ -4,7 +4,7 @@
 #include "room.h"
 #include <vector>
 
-class Tile;
+struct Tile;
 
 struct Action {
     Action();
@@ -23,7 +23,7 @@ struct Action {
 
 class PuzzleItem {
 public:
-    PuzzleItem();
+    PuzzleItem(int required = REQUIRED_NONE, bool initial = false);
     int Required;
     unsigned int SetTile;
     unsigned int ClearTile;
@@ -31,14 +31,14 @@ public:
     bool Set();
     bool Clear();
     bool Toggle();
+    void Reset();
     bool Solved() const;
     bool Status() const;
     static const int REQUIRED_NONE  = 0;
     static const int REQUIRED_SET   = 1;
     static const int REQUIRED_CLEAR = 2;
 private:
-    bool value;
-    bool solved;
+    bool value, solved, init;
 };
 
 #endif // PUZZLEITEM_H
