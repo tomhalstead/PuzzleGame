@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <world version="">
-	<start map="" room="" row="" col=""/>
+	<start room="" row="" col="" fileName=""/>
 	<tilesets>
 		<tileset id="" fileName="">
 			<tile id="" = draw="">

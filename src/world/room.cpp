@@ -1,8 +1,15 @@
 #include "room.h"
+#include <QDebug>
 
 Room::Room(size_t rows, size_t cols, int defaultConnection):
     Graph<Tile,int>(rows*cols,defaultConnection),numRows(rows),
-    numCols(cols), tileSet(NULL){}//, PuzzleLayer(NULL) {}
+    numCols(cols), tileSet(NULL){}
+
+Room::~Room()
+{
+    for(unsigned int i = 0; i < Puzzles.size(); i++)
+        delete Puzzles[i];
+}
 
 size_t Room::Rows() const {
     return numRows;
@@ -29,44 +36,45 @@ Tile &Room::getTile(size_t index)
 
 void Room::setTile(size_t index, size_t type)
 {
-    TileInfo info = tileSet->at(type);
+    TileInfo* info = &tileSet->Tiles[type];
     size_t row,col, check;
     int connect = Tile::CONNECTION_NORMAL;
     Coordinates(index,row,col);
     getTile(index).Type = type;
-    getTile(index).Draw = info.Draw;
-    if(info.Collision & TileInfo::COLLIDE_PUZZLE) {
+    getTile(index).Draw = info->Draw;
+    if(info->Collision & TileInfo::COLLIDE_PUZZLE) {
         connect |= Tile::CONNECTION_PUZZLE;
-        getTile(index).RoomLink.Puzzle = info.Index;
+        getTile(index).RoomLink.Puzzle = info->Index;
     }
-    if(info.Collision & TileInfo::COLLIDE_ITEM) {
+    if(info->Collision & TileInfo::COLLIDE_ITEM) {
         connect |= Tile::CONNECTION_ITEM;
-        getTile(index).RoomLink.Item = info.Item;
+        getTile(index).RoomLink.Item = info->Item;
+        qDebug() << "Tile " << index << " requires item: " << info->Item << "," << getTile(index).RoomLink.Item;
     }
     if(col < Cols()-1 ) {
         check = ItemIndex(row,col+1);
-        if(info.Collision & TileInfo::COLLIDE_EAST)
+        if(info->Collision & TileInfo::COLLIDE_EAST)
             Connection(ItemIndex(row,col+1), index) = Tile::CONNECTION_NONE;
         else
             Connection(ItemIndex(row,col+1), index) = connect;
     }
     if(col) {
         check = ItemIndex(row,col-1);
-        if(info.Collision & TileInfo::COLLIDE_WEST)
+        if(info->Collision & TileInfo::COLLIDE_WEST)
             Connection(ItemIndex(row,col-1), index) = Tile::CONNECTION_NONE;
         else
             Connection(ItemIndex(row,col-1), index) = connect;
     }
     if(row) {
         check = ItemIndex(row-1,col);
-        if(info.Collision & TileInfo::COLLIDE_NORTH)
+        if(info->Collision & TileInfo::COLLIDE_NORTH)
             Connection(ItemIndex(row-1,col), index) = Tile::CONNECTION_NONE;
         else
             Connection(ItemIndex(row-1,col), index) = connect;
     }
     if(row < Rows()-1) {
         check = ItemIndex(row+1,col);
-        if(info.Collision & TileInfo::COLLIDE_SOUTH)
+        if(info->Collision & TileInfo::COLLIDE_SOUTH)
             Connection(ItemIndex(row+1,col), index) = Tile::CONNECTION_NONE;
         else
             Connection(ItemIndex(row+1,col), index) = connect;
@@ -89,18 +97,12 @@ int &Room::Connection(size_t from, size_t to)
     return this->Edge(from,to);
 }
 
-void Room::setTileSet(size_t index, std::vector<TileInfo>* ptr)
+void Room::setTileSet(TileSet *ptr)
 {
-    setIndex = index;
     tileSet = ptr;
 }
 
-size_t Room::SetIndex() const
-{
-    return setIndex;
-}
-
-std::vector<TileInfo>& Room::TileSet()
+TileSet& Room::getTileSet() const
 {
     return *tileSet;
 }

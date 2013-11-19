@@ -4,6 +4,7 @@
 #include <QtGui>
 #include "glwindow.h"
 
+enum InterfaceState {STATE_INIT, STATE_NORMAL, STATE_DIALOG, STATE_ANIMATE, STATE_TRANSTION};
 class GLWindow;
 
 class GLInterface
@@ -11,9 +12,9 @@ class GLInterface
 public:
     GLInterface(GLWindow* parent);
     virtual ~GLInterface();
-    virtual QPixmap* resizeEvent(QResizeEvent *event);
-    virtual QPixmap* paint()=0;
-    virtual QPixmap* processKey(int key)=0;
+    virtual bool resizeEvent(QResizeEvent *event);
+    virtual void paint(QPainter& painter)=0;
+    virtual bool processKey(int key)=0;
     virtual void Close();
     virtual void Open();
     bool isOpen() const;
@@ -21,10 +22,7 @@ public:
     int Width() const;
 protected:
     void setFontHeight(QFont& font, int target);
-    void destroyDisplay();
     GLWindow* Parent;
-    QPixmap* Display;
-    QPainter Painter;
     QPen Pen;
     QFont Font;
 private:

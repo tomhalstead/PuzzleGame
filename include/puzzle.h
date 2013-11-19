@@ -13,13 +13,15 @@ class PuzzleItem;
 class Puzzle {
 public:
     Puzzle(std::vector<Room*>* Rooms, size_t ParentIndex);
+    ~Puzzle();
     void Activate(size_t row, size_t col);
     PuzzleItem* &getItem(size_t row, size_t col);
     PuzzleItem* &getItem(size_t index);
     size_t Size() const;
     bool Solved();
     void Reset();
-    std::vector<TileInfo>* TileSet;
+    void setTileSet(TileSet* ptr);
+    TileSet& getTileSet() const;
 private:
     bool solved;
     bool perform(size_t index);
@@ -27,6 +29,7 @@ private:
     std::vector<Room*>* rooms;
     size_t parentIndex;
     Room* parent;
+    TileSet* tileSet;
 };
 
 #endif // PUZZLE_H

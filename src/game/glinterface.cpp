@@ -1,16 +1,13 @@
 #include "glinterface.h"
 
-GLInterface::GLInterface(GLWindow *parent): Parent(parent), Display(0),active(false){
+GLInterface::GLInterface(GLWindow *parent): Parent(parent),active(false){
     int id = QFontDatabase::addApplicationFont(":/font/16bit.ttf");
     Font = QFont(QFontDatabase::applicationFontFamilies(id).at(0));
 }
 
-GLInterface::~GLInterface () {
-    qDebug() << "~GLInterface";
-    destroyDisplay();
-}
+GLInterface::~GLInterface () {}
 
-QPixmap *GLInterface::resizeEvent(QResizeEvent *event)
+bool GLInterface::resizeEvent(QResizeEvent *event)
 {
     bool changed = false;
     if(active) {
@@ -22,12 +19,8 @@ QPixmap *GLInterface::resizeEvent(QResizeEvent *event)
             width = Parent->width();
             changed = true;
         }
-        if(changed) {
-            destroyDisplay();
-            Display = new QPixmap(width,height);
-        }
     }
-    return paint();
+    return changed;
 }
 
 void GLInterface::Close()
@@ -73,12 +66,5 @@ void GLInterface::setFontHeight(QFont &font, int target)
             delete m;
             m = new QFontMetrics(font);
         }
-    }
-}
-
-void GLInterface::destroyDisplay() {
-    if(Display) {
-        delete Display;
-        Display = NULL;
     }
 }

@@ -16,7 +16,12 @@ SOURCES += \
     glworld.cpp \
     glmainmenu.cpp \
     glmenu.cpp \
-    glsplash.cpp
+    glsplash.cpp \
+    gltileset.cpp \
+    player.cpp \
+    glsprite.cpp \
+    gldialog.cpp \
+    items.cpp
 
 INCLUDEPATH += ../../include
 
@@ -37,7 +42,11 @@ HEADERS += \
     worldinfo.h \
     glmainmenu.h \
     glmenu.h \
-    glsplash.h
+    glsplash.h \
+    gltileset.h \
+    glsprite.h \
+    gldialog.h \
+    items.h
 
 RESOURCES += \
-    resources.qrc
+    res.qrc

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<xs:schema>
+	<xs:element name="world">
+		<xs:complexType>
+			<xs:attributeGroup ref="location"/>
+			<xs:attribute name="fileName" type="xs:string"/>
+			<xs:anyAttribute/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:attributeGroup name="location">
+		<xs:all>
+			<xs:attribute name="room" type="xs:positiveInteger"/>
+			<xs:attribute name="row" type="xs:positiveInteger" use="required"/>
+			<xs:attribute name="col" type="xs:positiveInteger" use="required"/>
+		</xs:all>
+	</xs:attributeGroup>
+</xs:schema>

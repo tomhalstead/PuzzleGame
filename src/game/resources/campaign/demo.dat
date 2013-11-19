@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<world version="0.0">
+<world version="0.0" name="demo">
 	<info>
 		<intro image="">
-			Our hero sets out on a quest for unimaginable treasure
+			Try out the puzzle mechanics.
 		</intro>
 		<victory image="">
-			Our hero found treasure
+			Wasn't that fun?
 		</victory>
 	</info>
+	<sprites>
+		<sprite id="0" fileName="players.png" width="16" height="18" default="1"/>
+	</sprites>
 	<start room="0" row="1" col="1"/>
+	<player id="0" sprite="0"/>
 	<tilesets>
-		<tileset id="0">
+		<tileset id="0" fileName="demo.bmp" tileSize="32">
 			<tile id="0" draw="0"/>
 			<tile id="2" draw="2"/>
 			<tile id="3" draw="3"/>
@@ -23,8 +27,13 @@
 			<tile id="7" draw="7"/>
 			<tile id="8" draw="8"/>
 			<tile id="9" draw="9"/>
+			<tile id="10" draw="10"/>
+			<tile id="11" draw="11" item="0"/>
 		</tileset>
 	</tilesets>
+	<items tileSet="0">
+		<item id="0" name="Key" description="Unlocks doors" type="0"/>
+	</items>
 	<map>
 		<room id="0" tileSet="0" rows="4" cols="4" name="Start">
 			<locations>
@@ -62,7 +71,7 @@
 				<location type="0"/>
 				<location type="1"/>
 				
-				<location type="3" data="-1">
+				<location type="11" data="-1">
 					<link room="2" row="1" col="6"/>
 				</location>
 				<location type="0"/>
@@ -77,7 +86,7 @@
 				<location type="1"/>
 			</locations>
 		</room>
-		<room id="3" tileSet="0" rows="4" cols="4" name="Dead end :(">
+		<room id="3" tileSet="0" rows="4" cols="4" name="Dead end?">
 				<locations>
 					<location type="1"/>
 					<location type="1"/>
@@ -93,7 +102,7 @@
 						<link room="1" row="2" col="2"/>
 					</location>
 					<location type="0"/>
-					<location type="0"/>
+					<location type="10" data="0"/>
 					<location type="1"/>
 
 					<location type="1"/>
@@ -234,9 +243,6 @@
 							<tile row="3" col="1" type="0"/>
 						</piece>
 					</pieces>
-					<actions>
-						<tile row="1" col="2" type="2"/>
-					</actions>
 				</puzzle>
 			</puzzles>
 		</room>

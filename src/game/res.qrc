@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/font">
+        <file alias="16bit.ttf">resources/font/16bit.ttf</file>
+    </qresource>
+    <qresource prefix="/campaign">
+        <file alias="players.png">resources/campaign/players.png</file>
+        <file alias="overworld.png">resources/campaign/overworld.png</file>
+        <file alias="default.dat">resources/campaign/default.dat</file>
+        <file alias="demo.dat">resources/campaign/demo.dat</file>
+        <file alias="demo.bmp">resources/campaign/demo.bmp</file>
+    </qresource>
+</RCC>

@@ -10,10 +10,9 @@ GLSplash::GLSplash(GLWindow *parent, const QString &text, QPixmap *bg, const QCo
 
 }
 
-QPixmap *GLSplash::resizeEvent(QResizeEvent *event)
+bool GLSplash::resizeEvent(QResizeEvent *event)
 {
-    GLInterface::resizeEvent(event);
-    return paint();
+    return GLInterface::resizeEvent(event);
 }
 
 GLSplash::~GLSplash()
@@ -22,26 +21,26 @@ GLSplash::~GLSplash()
         delete background;
 }
 
-QPixmap *GLSplash::paint()
+void GLSplash::paint(QPainter& painter)
 {
-    if(Display && isOpen()) {
-        Painter.begin(Display);
-        Painter.setPen(Pen);
-        Painter.setFont(Font);
-        Painter.fillRect(Parent->rect(),Qt::black);
-        if(background)
-            Painter.drawPixmap(0,0,*background);
-        Painter.drawText(Parent->rect(),Text,QTextOption(Qt::AlignCenter));
-        Painter.end();
-    }
-    return Display;
+    painter.setPen(Pen);
+    painter.setFont(Font);
+    painter.fillRect(Parent->rect(),Qt::black);
+    if(background)
+        painter.drawPixmap((Width()-background->width())/2,(Height()-background->height())/2,*background);
+    painter.drawText(Parent->rect(),Text,QTextOption(Qt::AlignCenter));
 }
 
-QPixmap *GLSplash::processKey(int key)
+bool GLSplash::processKey(int key)
 {
-    if(key == Qt::Key_Space)
+    if(key == Qt::Key_Space ||
+            key == Qt::Key_Escape ||
+            key == Qt::Key_Enter  ||
+            key == Qt::Key_Return) {
         Close();
-    return NULL;
+        return false;
+    }
+    return true;
 }
 
 void GLSplash::Close()

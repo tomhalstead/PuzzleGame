@@ -24,10 +24,9 @@ public:
 
 struct TileSet {
     std::vector<TileInfo> Tiles;
-    size_t TileSize;
-    size_t TilesWide;
-    size_t TilesHigh;
     QString FileName;
+    size_t Index;
+    int TileSize;
 };
 
 #endif // TILEINFO_H

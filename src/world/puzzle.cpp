@@ -11,6 +11,12 @@ Puzzle::Puzzle(std::vector<Room *> *Rooms, size_t ParentIndex):  solved(false), 
     items.resize(parent->Size() + 1,NULL);
 }
 
+Puzzle::~Puzzle()
+{
+    for(unsigned int i = 0; i < items.size(); i++)
+        delete items[i];
+}
+
 void Puzzle::Activate(size_t row, size_t col)
 {
     size_t index = parent->ItemIndex(row,col);
@@ -91,6 +97,16 @@ bool Puzzle::perform(size_t index)
         }
     }
     return result;
+}
+
+void Puzzle::setTileSet(TileSet *ptr)
+{
+    tileSet = ptr;
+}
+
+TileSet &Puzzle::getTileSet() const
+{
+    return *tileSet;
 }
 
 

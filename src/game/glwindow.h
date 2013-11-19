@@ -7,7 +7,7 @@ enum TransitionType {TRANSITION_NONE};
 #include <vector>
 #include <stack>
 #include "glinterface.h"
-#include <QKeyEvent>
+
 
 class GLInterface;
 
@@ -22,37 +22,35 @@ class GLWindow : public QGLWidget
 {
     Q_OBJECT
 public:
-    GLWindow(QWidget *parent = NULL, bool useMouse = false, QPixmap* Cursor = 0);
-    //void Transition(GLInterface* glInterface, TransitionType type);
+    GLWindow(QWidget *parent = NULL);
+    ~GLWindow();
     GLWindowInfo* Top();
     void Pop();
-    void Push(GLWindowInfo window, bool activate = false);
+    void Push(GLWindowInfo *window, bool activate = true, TransitionType t = TRANSITION_NONE);
     void Start();
     void Update(QPixmap* p);
     bool isStarted() const;
+    void Clear();
 protected:
     void initializeGL();
     void resizeEvent(QResizeEvent *);
-    void paintEvent(QPaintEvent *);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
 signals:
     
-public slots:
-    void paint();
+private slots:
+    void process();
 
 private:
-    void clearInactive();
-    void setInterface(TransitionType type = TRANSITION_NONE);
+    void paint();
+    void beginTransition(TransitionType type = TRANSITION_NONE);
     QPainter painter;
     QPixmap* curImage;
+    QPixmap* prevImage;
     GLWindowInfo* prevWindow;
-    bool inTransition, mouse, topActivated,started;
-    QPixmap* cursor;
-    std::stack<GLWindowInfo> windows;
+    bool inTransition, topActivated, started;
+    std::stack<GLWindowInfo*> windows;
     int curKey;
     QTimer* timer;
 };

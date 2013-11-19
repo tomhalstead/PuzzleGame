@@ -1,9 +1,10 @@
 #include "glmenu.h"
 
-MenuItem::MenuItem(const QString &text, bool enabled): Text(text),Enabled(enabled){}
+MenuItem::MenuItem(const QString &text, bool enabled, int id): Text(text),Enabled(enabled),ID(id) {}
 
-GLMenu::GLMenu(int itemHeight, const QRect &r): itemIndex(-1), menuIndex(-1), fontHeight(itemHeight),maxItems(0)
+GLMenu::GLMenu(int itemHeight, const QRect &r): itemIndex(-1), menuIndex(-1), fontHeight(itemHeight),maxItems(0), top(0)
 {
+    qDebug() << "GLMenu init";
     Resize(r);
 }
 
@@ -36,9 +37,9 @@ int GLMenu::CurrentTop() const
         return -1;
 }
 
-int GLMenu::CurrentItem() const
+MenuItem GLMenu::CurrentItem() const
 {
-    return itemIndex;
+    return items[itemIndex];
 }
 
 QRect &GLMenu::Bounds()
@@ -50,10 +51,14 @@ void GLMenu::Draw(QPainter &painter, QPen &pen,const QColor& selectedColor, cons
 {
     QColor normalColor = pen.color();
     int startIndex = itemIndex;
-    while(int(items.size())-startIndex < maxItems)
-        startIndex--;
-    if(startIndex < 0)
+    if(int(items.size()) < maxItems || startIndex < (maxItems - 1))
         startIndex = 0;
+    else {
+        while(int(items.size())-startIndex < maxItems)
+            startIndex--;
+        if(startIndex < 0)
+            startIndex = 0;
+    }
     for(int i = 0; i < maxItems && i+startIndex < int(items.size()) ; i++) {
         if(i + startIndex == itemIndex)
             pen.setColor(selectedColor);
@@ -70,6 +75,7 @@ void GLMenu::Draw(QPainter &painter, QPen &pen,const QColor& selectedColor, cons
 
 void GLMenu::Resize(const QRect &r)
 {
+    qDebug() << "GLMenu resize";
     bound = r;
     int newMax = (r.height()+16)/(fontHeight+16);
     if(newMax != maxItems) {
@@ -81,11 +87,17 @@ void GLMenu::Resize(const QRect &r)
             top[i] = (i*16) + (i * fontHeight) + bound.top();
 
     }
+    qDebug() << "Finish resize";
 }
 
 MenuItem &GLMenu::operator [](size_t i)
 {
-    return items[itemIndex];
+    return at(i);
+}
+
+MenuItem &GLMenu::at(size_t i)
+{
+    return items[i];
 }
 
 int GLMenu::operator --()

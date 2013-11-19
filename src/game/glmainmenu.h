@@ -1,6 +1,7 @@
 #ifndef GLMAINMENU_H
 #define GLMAINMENU_H
 
+#include <QDir>
 #include "glinterface.h"
 #include "glworld.h"
 #include "glmenu.h"
@@ -10,16 +11,17 @@ class GLMainMenu : public GLInterface
 public:
     GLMainMenu(GLWindow* parent);
     ~GLMainMenu();
-    virtual QPixmap* resizeEvent(QResizeEvent* event);
-    virtual QPixmap* paint();
-    virtual QPixmap* processKey(int key);
+    virtual bool resizeEvent(QResizeEvent* event);
+    void paint(QPainter& painter);
+    virtual bool processKey(int key);
     virtual void Close();
     virtual void Open();
     void setDimensions();
 private:
     void populateMenu();
+    void processMenuItem();
     GLWorld* world;
-    GLMenu* menu;
+    GLMenu *topMenu, *subMenu;
     int tileHeight, tileWidth;
     int titleHeight,titleLine[3];
     int menuHeight;
